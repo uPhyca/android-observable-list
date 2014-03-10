@@ -1,0 +1,4 @@
+include 'library'
+project(':library').name = 'android-observable-list'
+
+project(':').name = 'android-observable-list-parent'

@@ -1,0 +1,66 @@
+buildscript {
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'nexus'
+apply plugin: 'groovy'
+
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+
+configurations {
+    provided
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
+dependencies {
+    provided "com.google.android:android:${androidVersion}"
+    provided "com.google.android:support-v4:${supportVersion}"
+
+    testCompile "org.codehaus.groovy:groovy-all:1.8.+"
+    testCompile 'org.robospock:robospock:0.4'
+    testCompile 'org.robolectric:robolectric:2.2'
+    testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
+
+    testCompile "cglib:cglib-nodep:2.2.2"     // allows mocking of classes (in addition to interfaces)
+    testCompile "org.objenesis:objenesis:1.2" // allows mocking of classes without default constructor (together with CGLIB)
+}
+
+modifyPom {
+    project {
+        name "android-observable-list"
+        description POM_DESCRIPTION
+        url POM_URL
+
+        scm {
+            url POM_SCM_URL
+            connection POM_SCM_CONNECTION
+            developerConnection POM_SCM_DEV_CONNECTION
+        }
+
+        licenses {
+            license {
+                name POM_LICENCE_NAME
+                url POM_LICENCE_URL
+                distribution POM_LICENCE_DIST
+            }
+        }
+
+        developers {
+            developer {
+                id POM_DEVELOPER_ID
+                name POM_DEVELOPER_NAME
+            }
+        }
+    }
+}
