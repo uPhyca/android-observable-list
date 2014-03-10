@@ -1,5 +1,6 @@
 [![Build Status](https://secure.travis-ci.org/uPhyca/android-observable-list.png?branch=master)](http://travis-ci.org/uPhyca/android-observable-list)
 
+
 android-observable-list provides an implementation of ObservableList.
 
 
