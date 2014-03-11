@@ -1,10 +1,21 @@
 
 package com.uphyca.android.observable;
 
+import android.annotation.TargetApi;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.os.Build;
 
 public abstract class ObservableListLoader<T> extends AsyncTaskLoader<ObservableList<T>> {
+
+    private static final LoadInBackgroundCanceled LOAD_IN_BACKGROUND_CANCELED;
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            LOAD_IN_BACKGROUND_CANCELED = new LoadInBackgroundCanceledDelegate();
+        } else {
+            LOAD_IN_BACKGROUND_CANCELED = new UnsupportedLoadInBackgroundCanceled();
+        }
+    }
 
     ObservableList<T> mObservableList;
 
@@ -15,7 +26,7 @@ public abstract class ObservableListLoader<T> extends AsyncTaskLoader<Observable
     @Override
     public void deliverResult(ObservableList<T> observableList) {
         if (isReset()) {
-            // An async query came in while the loader is stopped
+            // An async execute came in while the loader is stopped
             if (observableList != null) {
                 observableList.close();
             }
@@ -67,5 +78,33 @@ public abstract class ObservableListLoader<T> extends AsyncTaskLoader<Observable
             mObservableList.close();
         }
         mObservableList = null;
+    }
+
+    @Override
+    public boolean isLoadInBackgroundCanceled() {
+        return LOAD_IN_BACKGROUND_CANCELED.get(this);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private final boolean callIsLoadInBackgroundCanceled() {
+        return super.isLoadInBackgroundCanceled();
+    }
+
+    private interface LoadInBackgroundCanceled {
+        boolean get(ObservableListLoader<?> owner);
+    }
+
+    private static class LoadInBackgroundCanceledDelegate implements LoadInBackgroundCanceled {
+        @Override
+        public boolean get(ObservableListLoader<?> owner) {
+            return owner.callIsLoadInBackgroundCanceled();
+        }
+    }
+
+    private static class UnsupportedLoadInBackgroundCanceled implements LoadInBackgroundCanceled {
+        @Override
+        public boolean get(ObservableListLoader<?> owner) {
+            return false;
+        }
     }
 }

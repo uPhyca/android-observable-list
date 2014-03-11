@@ -27,6 +27,8 @@ dependencies {
     provided "com.google.android:android:${androidVersion}"
     provided "com.google.android:support-v4:${supportVersion}"
 
+    testCompile project(":robolectric")
+
     testCompile "org.codehaus.groovy:groovy-all:1.8.+"
     testCompile 'org.robospock:robospock:0.4'
     testCompile 'org.robolectric:robolectric:2.2'

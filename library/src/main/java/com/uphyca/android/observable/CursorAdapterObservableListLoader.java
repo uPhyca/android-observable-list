@@ -1,15 +1,11 @@
 
 package com.uphyca.android.observable;
 
-import android.annotation.TargetApi;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
-import android.os.CancellationSignal;
-import android.os.OperationCanceledException;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T> {
 
     final ForceLoadContentObserver mObserver;
@@ -21,7 +17,7 @@ public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T
     String mSortOrder;
     CursorAdapterObservableList.Mapper<T> mMapper;
 
-    CancellationSignal mCancellationSignal;
+    CancellationSignalCompat mCancellationSignal;
 
     public CursorAdapterObservableListLoader(Context context) {
         super(context);
@@ -43,13 +39,12 @@ public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T
     public ObservableList<T> loadInBackground() {
         synchronized (this) {
             if (isLoadInBackgroundCanceled()) {
-                throw new OperationCanceledException();
+                throw OperationCanceledExceptionCompat.create();
             }
-            mCancellationSignal = new CancellationSignal();
+            mCancellationSignal = new CancellationSignalCompat();
         }
         try {
-            Cursor cursor = getContext().getContentResolver()
-                                        .query(mUri, mProjection, mSelection, mSelectionArgs, mSortOrder, mCancellationSignal);
+            Cursor cursor = QueryCompat.execute(getContext().getContentResolver(), mUri, mProjection, mSelection, mSelectionArgs, mSortOrder, mCancellationSignal);
             if (cursor != null) {
                 try {
                     // Ensure the cursor window is filled.
@@ -78,6 +73,10 @@ public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T
                 mCancellationSignal.cancel();
             }
         }
+    }
+
+    void registerContentObserver(Cursor cursor, ContentObserver observer) {
+        cursor.registerContentObserver(mObserver);
     }
 
     public Uri getUri() {

@@ -8,7 +8,7 @@ import pl.polidea.robospock.RoboSpecification
 import spock.util.concurrent.BlockingVariable
 
 @Config(manifest = Config.NONE, shadows = [ShadowAsyncTaskLoader])
-class ObservableListLoaderSpec extends RoboSpecification {
+class ObservableListLoaderICSSpec extends RoboSpecification {
 
     def "startLoading"() {
         given:

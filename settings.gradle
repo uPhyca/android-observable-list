@@ -1,4 +1,10 @@
 include 'library'
 project(':library').name = 'android-observable-list'
 
+include 'ics-test'
+project(':ics-test').name = 'ics-tests'
+
+include 'robolectric'
+project(':robolectric').name = 'robolectric'
+
 project(':').name = 'android-observable-list-parent'
