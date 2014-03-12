@@ -2,7 +2,6 @@
 package com.uphyca.android.observable;
 
 import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -73,10 +72,6 @@ public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T
                 mCancellationSignal.cancel();
             }
         }
-    }
-
-    void registerContentObserver(Cursor cursor, ContentObserver observer) {
-        cursor.registerContentObserver(mObserver);
     }
 
     public Uri getUri() {

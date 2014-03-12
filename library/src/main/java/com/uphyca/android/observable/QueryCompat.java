@@ -4,6 +4,7 @@ package com.uphyca.android.observable;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CancellationSignal;
@@ -23,8 +24,14 @@ class QueryCompat {
         return QUERY.execute(contentResolver, uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
     }
 
+    public static Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal) {
+        return QUERY.execute(sqLiteDatabase, distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, cancellationSignal);
+    }
+
     private interface Query {
         Cursor execute(ContentResolver contentResolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignalCompat cancellationSignal);
+
+        Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -33,12 +40,22 @@ class QueryCompat {
         public Cursor execute(ContentResolver contentResolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignalCompat cancellationSignal) {
             return contentResolver.query(uri, projection, selection, selectionArgs, sortOrder, (CancellationSignal) cancellationSignal.getUnderlyingObject());
         }
+
+        @Override
+        public Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal) {
+            return sqLiteDatabase.query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, (CancellationSignal) cancellationSignal.getUnderlyingObject());
+        }
     }
 
     private static class OutgoingQuery implements Query {
         @Override
         public Cursor execute(ContentResolver contentResolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignalCompat cancellationSignal) {
             return contentResolver.query(uri, projection, selection, selectionArgs, sortOrder);
+        }
+
+        @Override
+        public Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal) {
+            return sqLiteDatabase.query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, (CancellationSignal) cancellationSignal.getUnderlyingObject());
         }
     }
 }
