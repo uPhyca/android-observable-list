@@ -7,67 +7,56 @@ import android.os.CancellationSignal;
 
 class CancellationSignalCompat {
 
-    private static final Allocator ALLOCATOR;
-    private static final Canceller CANCELLER;
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ALLOCATOR = new Allocation();
-            CANCELLER = new Execution();
-        } else {
-            ALLOCATOR = new Null();
-            CANCELLER = new NoOp();
-        }
-    }
-
-    private final Object mUnderlyingObject;
+    private final Canceller mCanceller;
 
     CancellationSignalCompat() {
-        mUnderlyingObject = ALLOCATOR.allocate();
+        mCanceller = getCanceller();
     }
 
     void cancel() {
-        CANCELLER.cancel(mUnderlyingObject);
+        mCanceller.cancel();
     }
 
     Object getUnderlyingObject() {
-        return mUnderlyingObject;
+        return mCanceller.getUnderlyingObject();
     }
 
-    private interface Allocator {
-        Object allocate();
-    }
-
-    private static class Allocation implements Allocator {
-        @Override
-        public Object allocate() {
-            return new CancellationSignal();
-        }
-    }
-
-    private static class Null implements Allocator {
-        @Override
-        public Object allocate() {
-            return null;
-        }
+    private static Canceller getCanceller() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new Execution() : new NoOp();
     }
 
     private interface Canceller {
-        void cancel(Object cancellationSignal);
+        void cancel();
+
+        Object getUnderlyingObject();
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static class Execution implements Canceller {
+
+        private final CancellationSignal mCancellationSignal = new CancellationSignal();
+
         @Override
-        public void cancel(Object cancellationSignal) {
-            CancellationSignal.class.cast(cancellationSignal)
-                                    .cancel();
+        public void cancel() {
+            mCancellationSignal.cancel();
+        }
+
+        @Override
+        public Object getUnderlyingObject() {
+            return mCancellationSignal;
         }
     }
 
     private static class NoOp implements Canceller {
+
         @Override
-        public void cancel(Object cancellationSignal) {
+        public void cancel() {
             // no-op
+        }
+
+        @Override
+        public Object getUnderlyingObject() {
+            return null;
         }
     }
 }

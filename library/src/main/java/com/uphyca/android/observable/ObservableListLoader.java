@@ -8,15 +8,6 @@ import android.os.Build;
 
 public abstract class ObservableListLoader<T> extends AsyncTaskLoader<ObservableList<T>> {
 
-    private static final LoadInBackgroundCanceled LOAD_IN_BACKGROUND_CANCELED;
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            LOAD_IN_BACKGROUND_CANCELED = new LoadInBackgroundCanceledDelegate();
-        } else {
-            LOAD_IN_BACKGROUND_CANCELED = new UnsupportedLoadInBackgroundCanceled();
-        }
-    }
-
     ObservableList<T> mObservableList;
 
     public ObservableListLoader(Context context) {
@@ -80,9 +71,13 @@ public abstract class ObservableListLoader<T> extends AsyncTaskLoader<Observable
         mObservableList = null;
     }
 
+    private static final LoadInBackgroundCanceled getLoadInBackgroundCanceled() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new LoadInBackgroundCanceledDelegate() : new UnsupportedLoadInBackgroundCanceled();
+    }
+
     @Override
     public boolean isLoadInBackgroundCanceled() {
-        return LOAD_IN_BACKGROUND_CANCELED.get(this);
+        return getLoadInBackgroundCanceled().get(this);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

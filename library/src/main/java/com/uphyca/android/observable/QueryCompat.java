@@ -11,21 +11,16 @@ import android.os.CancellationSignal;
 
 class QueryCompat {
 
-    private static final Query QUERY;
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            QUERY = new CancellableQuery();
-        } else {
-            QUERY = new OutgoingQuery();
-        }
+    private static Query getQuery() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new CancellableQuery() : new OutgoingQuery();
     }
 
     public static Cursor execute(ContentResolver contentResolver, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignalCompat cancellationSignal) {
-        return QUERY.execute(contentResolver, uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        return getQuery().execute(contentResolver, uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
     }
 
     public static Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal) {
-        return QUERY.execute(sqLiteDatabase, distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, cancellationSignal);
+        return getQuery().execute(sqLiteDatabase, distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, cancellationSignal);
     }
 
     private interface Query {
@@ -55,7 +50,7 @@ class QueryCompat {
 
         @Override
         public Cursor execute(SQLiteDatabase sqLiteDatabase, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CancellationSignalCompat cancellationSignal) {
-            return sqLiteDatabase.query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, (CancellationSignal) cancellationSignal.getUnderlyingObject());
+            return sqLiteDatabase.query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         }
     }
 }

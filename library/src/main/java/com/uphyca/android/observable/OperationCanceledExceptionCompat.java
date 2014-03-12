@@ -7,17 +7,12 @@ import android.os.OperationCanceledException;
 
 class OperationCanceledExceptionCompat {
 
-    private static final Factory FACTORY;
-    static {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            FACTORY = new OperationCanceledExceptionFactory();
-        } else {
-            FACTORY = new IllegalStateExceptionFactory();
-        }
+    static final RuntimeException create() {
+        return getFactory().create();
     }
 
-    static final RuntimeException create() {
-        return FACTORY.create();
+    private static final Factory getFactory() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new OperationCanceledExceptionFactory() : new IllegalStateExceptionFactory();
     }
 
     private interface Factory {

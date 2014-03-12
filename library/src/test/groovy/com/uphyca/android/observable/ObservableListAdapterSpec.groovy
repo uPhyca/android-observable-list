@@ -18,12 +18,17 @@ package com.uphyca.android.observable
 
 import android.app.Activity
 import android.database.MatrixCursor
+import android.os.Build
 import org.robolectric.Robolectric
 import org.robolectric.annotation.Config
 import pl.polidea.robospock.RoboSpecification
 
 @Config(manifest = Config.NONE)
 class ObservableListAdapterSpec extends RoboSpecification {
+
+    def setupSpec() {
+        Robolectric.Reflection.setFinalStaticField(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.JELLY_BEAN)
+    }
 
     def "getItem"() {
         given:

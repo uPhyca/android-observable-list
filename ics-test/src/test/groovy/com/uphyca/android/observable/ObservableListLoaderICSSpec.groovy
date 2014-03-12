@@ -1,6 +1,7 @@
 package com.uphyca.android.observable
 
 import android.content.Loader
+import android.os.Build
 import org.robolectric.Robolectric
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowAsyncTaskLoader
@@ -10,9 +11,13 @@ import spock.util.concurrent.BlockingVariable
 @Config(manifest = Config.NONE, shadows = [ShadowAsyncTaskLoader])
 class ObservableListLoaderICSSpec extends RoboSpecification {
 
+    def setupSpec() {
+        Robolectric.Reflection.setFinalStaticField(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    }
+
     def "startLoading"() {
         given:
-        def holder = new BlockingVariable(1)
+        def holder = new BlockingVariable<ObservableList<String>>(1)
         def result = Mock(ObservableList)
         def underTest = new ObservableListLoader<String>(Robolectric.application) {
             @Override
