@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class SQLiteCursorAdapterObservableListLoader<T> extends ObservableListLoader<T> {
+public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
 
     final ForceLoadContentObserver mObserver;
 
@@ -26,12 +26,12 @@ public class SQLiteCursorAdapterObservableListLoader<T> extends ObservableListLo
     CursorAdapterObservableList.Mapper<T> mMapper;
     CancellationSignalCompat mCancellationSignal;
 
-    public SQLiteCursorAdapterObservableListLoader(Context context) {
+    public SQLiteObservableListLoader(Context context) {
         super(context);
         mObserver = new ForceLoadContentObserver();
     }
 
-    public SQLiteCursorAdapterObservableListLoader(Context context, SQLiteOpenHelper SQLiteOpenHelper, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CursorAdapterObservableList.Mapper<T> mapper) {
+    public SQLiteObservableListLoader(Context context, SQLiteOpenHelper SQLiteOpenHelper, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CursorAdapterObservableList.Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
         mSQLiteOpenHelper = SQLiteOpenHelper;

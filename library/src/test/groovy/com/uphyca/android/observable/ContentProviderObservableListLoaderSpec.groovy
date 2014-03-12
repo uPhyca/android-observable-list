@@ -14,12 +14,12 @@ import static org.robolectric.Robolectric.application
 import static org.robolectric.Robolectric.shadowOf
 
 @Config(manifest = Config.NONE, shadows = [ShadowAsyncTaskLoader])
-class CursorAdapterObservableListLoaderICSSpec extends RoboSpecification {
+class ContentProviderObservableListLoaderSpec extends RoboSpecification {
 
     def "startLoading"() {
         given:
         def holder = new BlockingVariable(1)
-        def underTest = new CursorAdapterObservableListLoader<String>(application)
+        def underTest = new ContentProviderObservableListLoader<String>(application)
         underTest.setMapper(new CursorAdapterObservableList.Mapper<String>() {
             @Override
             String convert(Cursor cursor) {

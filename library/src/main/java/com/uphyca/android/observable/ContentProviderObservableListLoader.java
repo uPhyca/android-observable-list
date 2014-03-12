@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T> {
+public class ContentProviderObservableListLoader<T> extends ObservableListLoader<T> {
 
     final ForceLoadContentObserver mObserver;
 
@@ -18,12 +18,12 @@ public class CursorAdapterObservableListLoader<T> extends ObservableListLoader<T
 
     CancellationSignalCompat mCancellationSignal;
 
-    public CursorAdapterObservableListLoader(Context context) {
+    public ContentProviderObservableListLoader(Context context) {
         super(context);
         mObserver = new ForceLoadContentObserver();
     }
 
-    public CursorAdapterObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CursorAdapterObservableList.Mapper<T> mapper) {
+    public ContentProviderObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CursorAdapterObservableList.Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
         mUri = uri;
