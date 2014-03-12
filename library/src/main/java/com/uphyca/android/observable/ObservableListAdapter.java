@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2014 uPhyca Inc.
  *
+ * Copyright (C) 2010 The Android Open Source Project
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +26,7 @@ import android.widget.ArrayAdapter;
 
 /**
  * A concrete BaseAdapter that is backed by an ObservableList of arbitrary objects.
- * 
+ *
  * @param <T> the list element type
  * @author Sosuke Masui (masui@uphyca.com)
  */
@@ -72,11 +74,11 @@ public class ObservableListAdapter<T> extends ArrayAdapter<T> {
     /**
      * Swap in a new ObservableList, returning the old ObservableList.
      * The returned old ObservableList is <em>not</em> closed.
-     * 
+     *
      * @param newObservableList The new observableList to be used.
      * @return Returns the previously set ObservableList, or null if there was a not one.
-     *         If the given new ObservableList is the same instance is the previously set
-     *         ObservableList, null is also returned.
+     * If the given new ObservableList is the same instance is the previously set
+     * ObservableList, null is also returned.
      */
     public ObservableList<T> swapObservableList(ObservableList<T> newObservableList) {
         if (newObservableList == mObservableList) {

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2014 uPhyca Inc.
+ *
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.uphyca.android.observable;
 
@@ -5,6 +22,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+/**
+ * A loader that queries the {@link android.content.ContentResolver} and returns a cursor backed {@link com.uphyca.android.observable.ObservableList}.
+ *
+ * @author Sosuke Masui (masui@uphyca.com)
+ */
 public class ContentProviderObservableListLoader<T> extends ObservableListLoader<T> {
 
     final ForceLoadContentObserver mObserver;
@@ -18,11 +40,19 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
 
     CancellationSignalCompat mCancellationSignal;
 
+    /**
+     * Creates an empty unspecified ObservableListLoader.  You must follow this with calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to specify the query to perform.
+     */
     public ContentProviderObservableListLoader(Context context) {
         super(context);
         mObserver = new ForceLoadContentObserver();
     }
 
+    /**
+     * Creates a fully-specified ObservableListLoader.  See
+     * {@link android.content.ContentResolver#query(Uri, String[], String, String[], String)} for documentation on the meaning of the parameters.
+     * These will be passed as-is to that call.
+     */
     public ContentProviderObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CursorAdapterObservableList.Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
@@ -34,6 +64,7 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
         mMapper = mapper;
     }
 
+    /* Runs on a worker thread */
     @Override
     public ObservableList<T> loadInBackground() {
         synchronized (this) {

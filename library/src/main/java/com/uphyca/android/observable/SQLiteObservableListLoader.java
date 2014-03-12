@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2014 uPhyca Inc.
+ *
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.uphyca.android.observable;
 
@@ -6,6 +23,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * A loader that queries the {@link android.database.sqlite.SQLiteDatabase} and returns a cursor backed {@link com.uphyca.android.observable.ObservableList}.
+ *
+ * @author Sosuke Masui (masui@uphyca.com)
+ */
 public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
 
     final ForceLoadContentObserver mObserver;
@@ -26,11 +48,19 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
     CursorAdapterObservableList.Mapper<T> mMapper;
     CancellationSignalCompat mCancellationSignal;
 
+    /**
+     * Creates an empty unspecified ObservableListLoader.  You must follow this with calls to {@link #setTable(String)}, {@link #setSelection(String)}, etc to specify the query to perform.
+     */
     public SQLiteObservableListLoader(Context context) {
         super(context);
         mObserver = new ForceLoadContentObserver();
     }
 
+    /**
+     * Creates a fully-specified CursorLoader.  See
+     * {@link android.database.sqlite.SQLiteDatabase#query(boolean, String, String[], String, String[], String, String, String, String)} for documentation on the meaning of the parameters.
+     * These will be passed as-is to that call.
+     */
     public SQLiteObservableListLoader(Context context, SQLiteOpenHelper SQLiteOpenHelper, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CursorAdapterObservableList.Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
@@ -47,6 +77,7 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
         mMapper = mapper;
     }
 
+    /* Runs on a worker thread */
     @Override
     public ObservableList<T> loadInBackground() {
         synchronized (this) {
