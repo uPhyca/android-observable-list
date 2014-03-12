@@ -22,11 +22,16 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.database.DataSetObserver;
 import android.os.Handler;
-import android.widget.ArrayAdapter;
+
+
+import java.util.AbstractList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A concrete BaseAdapter that is backed by an ObservableList of arbitrary objects.
- *
+ * 
  * @param <T> the list element type
  * @author Sosuke Masui (masui@uphyca.com)
  */
@@ -42,43 +47,49 @@ public class ObservableListAdapter<T> extends ArrayAdapter<T> {
 
     public ObservableListAdapter(Context context, int resource) {
         super(context, resource);
+        init(context, null);
     }
 
     public ObservableListAdapter(Context context, int resource, int textViewResourceId) {
         super(context, resource, textViewResourceId);
+        init(context, null);
     }
 
     public ObservableListAdapter(Context context, int resource, ObservableList<T> objects) {
         super(context, resource, objects);
+        init(context, objects);
     }
 
     public ObservableListAdapter(Context context, int resource, int textViewResourceId, ObservableList<T> objects) {
         super(context, resource, textViewResourceId, objects);
+        init(context, objects);
     }
 
-    void init(Context context, ObservableList<T> c) {
-        boolean cursorPresent = c != null;
-        mObservableList = c;
-        mDataValid = cursorPresent;
+    void init(Context context, ObservableList<T> observableList) {
+        boolean observableListPresent = observableList != null;
+        mObservableList = observableList;
+        mDataValid = observableListPresent;
         mChangeObserver = new ChangeObserver();
         mDataSetObserver = new MyDataSetObserver();
 
-        if (cursorPresent) {
-            if (mChangeObserver != null)
-                c.registerContentObserver(mChangeObserver);
-            if (mDataSetObserver != null)
-                c.registerDataSetObserver(mDataSetObserver);
+        if (observableListPresent) {
+            if (mChangeObserver != null) {
+                observableList.registerContentObserver(mChangeObserver);
+            }
+            if (mDataSetObserver != null) {
+                observableList.registerDataSetObserver(mDataSetObserver);
+            }
         }
     }
 
     /**
      * Swap in a new ObservableList, returning the old ObservableList.
      * The returned old ObservableList is <em>not</em> closed.
-     *
+     * 
      * @param newObservableList The new observableList to be used.
      * @return Returns the previously set ObservableList, or null if there was a not one.
-     * If the given new ObservableList is the same instance is the previously set
-     * ObservableList, null is also returned.
+     *         If the given new ObservableList is the same instance is the previously set
+     *         ObservableList, null is also returned.
      */
     public ObservableList<T> swapObservableList(ObservableList<T> newObservableList) {
         if (newObservableList == mObservableList) {
@@ -86,22 +97,27 @@ public class ObservableListAdapter<T> extends ArrayAdapter<T> {
         }
         ObservableList<T> oldObservableList = mObservableList;
         if (oldObservableList != null) {
-            if (mChangeObserver != null)
+            if (mChangeObserver != null) {
                 oldObservableList.unregisterContentObserver(mChangeObserver);
-            if (mDataSetObserver != null)
+            }
+            if (mDataSetObserver != null) {
                 oldObservableList.unregisterDataSetObserver(mDataSetObserver);
+            }
         }
         mObservableList = newObservableList;
         if (newObservableList != null) {
-            if (mChangeObserver != null)
+            if (mChangeObserver != null) {
                 newObservableList.registerContentObserver(mChangeObserver);
-            if (mDataSetObserver != null)
+            }
+            if (mDataSetObserver != null) {
                 newObservableList.registerDataSetObserver(mDataSetObserver);
+            }
             mDataValid = true;
-            // notify the observers about the new cursor
-            notifyDataSetChanged();
+            // notify the observers about the new observableList
+            set(newObservableList, true);
         } else {
             mDataValid = false;
+            set(new ArrayList<T>(), true);
             // notify the observers about the lack of a data set
             notifyDataSetInvalidated();
         }
