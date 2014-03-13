@@ -20,11 +20,7 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import com.uphyca.android.observable.ContentProviderObservableListLoader;
-import com.uphyca.android.observable.CursorAdapterObservableList;
 import com.uphyca.android.observable.ObservableList;
 import com.uphyca.android.observable.ObservableListAdapter;
 
@@ -49,16 +45,7 @@ public class MainActivity extends Activity {
 
         @Override
         public Loader<ObservableList<String>> onCreateLoader(int id, Bundle args) {
-            String[] projection = {
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
-            };
-            CursorAdapterObservableList.Mapper<String> mapper = new CursorAdapterObservableList.Mapper<String>() {
-                @Override
-                public String convert(Cursor cursor) {
-                    return !cursor.isNull(0) ? cursor.getString(0) : "<unknown>";
-                }
-            };
-            return new ContentProviderObservableListLoader(getActivity(), ContactsContract.Contacts.CONTENT_URI, projection, null, null, null, mapper);
+            return new ContactsService(getActivity()).findAll();
         }
 
         @Override
