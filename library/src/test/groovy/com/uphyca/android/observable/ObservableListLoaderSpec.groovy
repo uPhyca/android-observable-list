@@ -39,7 +39,7 @@ class ObservableListLoaderSpec extends RoboSpecification {
         def underTest = new ObservableListLoader<String>(Robolectric.application) {
             @Override
             ObservableList<String> loadInBackground() {
-                return result
+                return null
             }
         }
         then:

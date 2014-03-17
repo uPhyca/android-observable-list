@@ -25,7 +25,7 @@ import android.os.Build;
 
 /**
  * Abstract Loader that provides an ObservableList.
- *
+ * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
 public abstract class ObservableListLoader<T> extends AsyncTaskLoader<ObservableList<T>> {
@@ -94,13 +94,23 @@ public abstract class ObservableListLoader<T> extends AsyncTaskLoader<Observable
         mObservableList = null;
     }
 
-    private static final LoadInBackgroundCanceled getLoadInBackgroundCanceled() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new LoadInBackgroundCanceledDelegate() : new UnsupportedLoadInBackgroundCanceled();
+    private static final LoadInBackground getLoadInBackground() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? new LoadInBackgroundDelegate() : new UnsupportedLoadInBackground();
+    }
+
+    @Override
+    public void cancelLoadInBackground() {
+        getLoadInBackground().cancelLoadInBackGround(this);
     }
 
     @Override
     public boolean isLoadInBackgroundCanceled() {
-        return getLoadInBackgroundCanceled().get(this);
+        return getLoadInBackground().isLoadInBackGroundCanceled(this);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private final void callCancelLoadInBackground() {
+        super.cancelLoadInBackground();
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -108,21 +118,33 @@ public abstract class ObservableListLoader<T> extends AsyncTaskLoader<Observable
         return super.isLoadInBackgroundCanceled();
     }
 
-    private interface LoadInBackgroundCanceled {
-        boolean get(ObservableListLoader<?> owner);
+    private interface LoadInBackground {
+        boolean isLoadInBackGroundCanceled(ObservableListLoader<?> owner);
+
+        void cancelLoadInBackGround(ObservableListLoader<?> owner);
     }
 
-    private static class LoadInBackgroundCanceledDelegate implements LoadInBackgroundCanceled {
+    private static class LoadInBackgroundDelegate implements LoadInBackground {
         @Override
-        public boolean get(ObservableListLoader<?> owner) {
+        public boolean isLoadInBackGroundCanceled(ObservableListLoader<?> owner) {
             return owner.callIsLoadInBackgroundCanceled();
+        }
+
+        @Override
+        public void cancelLoadInBackGround(ObservableListLoader<?> owner) {
+            owner.callCancelLoadInBackground();
         }
     }
 
-    private static class UnsupportedLoadInBackgroundCanceled implements LoadInBackgroundCanceled {
+    private static class UnsupportedLoadInBackground implements LoadInBackground {
         @Override
-        public boolean get(ObservableListLoader<?> owner) {
+        public boolean isLoadInBackGroundCanceled(ObservableListLoader<?> owner) {
             return false;
+        }
+
+        @Override
+        public void cancelLoadInBackGround(ObservableListLoader<?> owner) {
+            //no-op
         }
     }
 }
