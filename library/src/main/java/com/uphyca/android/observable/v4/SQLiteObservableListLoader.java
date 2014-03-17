@@ -16,12 +16,15 @@
  * limitations under the License.
  */
 
-package com.uphyca.android.observable;
+package com.uphyca.android.observable.v4;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.uphyca.android.observable.CursorAdapterObservableList;
+import com.uphyca.android.observable.Mapper;
+import com.uphyca.android.observable.ObservableList;
 
 /**
  * A loader that queries the {@link android.database.sqlite.SQLiteDatabase} and returns a cursor backed {@link com.uphyca.android.observable.ObservableList}.
@@ -46,7 +49,6 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
     SQLiteDatabase mSQLiteDatabase;
 
     Mapper<T> mMapper;
-    CancellationSignalCompat mCancellationSignal;
 
     /**
      * Creates an empty unspecified ObservableListLoader. You must follow this with calls to {@link #setTable(String)}, {@link #setSelection(String)}, etc to specify the query to perform.
@@ -79,46 +81,23 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
     /* Runs on a worker thread */
     @Override
     public ObservableList<T> loadInBackground() {
-        synchronized (this) {
-            if (isLoadInBackgroundCanceled()) {
-                throw OperationCanceledExceptionCompat.create();
-            }
-            mCancellationSignal = new CancellationSignalCompat();
-        }
-        try {
-            mSQLiteDatabase = mSQLiteOpenHelper.getReadableDatabase();
-            if (mSQLiteDatabase == null) {
-                return null;
-            }
-            Cursor cursor = QueryCompat.execute(mSQLiteDatabase, mDistinct, mTable, mColumns, mSelection, mSelectionArgs, mGroupBy, mHaving, mOrderBy, mLimit, mCancellationSignal);
-            if (cursor != null) {
-                try {
-                    // Ensure the cursor window is filled.
-                    cursor.getCount();
-                    cursor.registerContentObserver(mObserver);
-                } catch (RuntimeException ex) {
-                    cursor.close();
-                    throw ex;
-                }
-                return new CursorAdapterObservableList<T>(cursor, mMapper);
-            }
+        mSQLiteDatabase = mSQLiteOpenHelper.getReadableDatabase();
+        if (mSQLiteDatabase == null) {
             return null;
-        } finally {
-            synchronized (this) {
-                mCancellationSignal = null;
-            }
         }
-    }
-
-    @Override
-    public void cancelLoadInBackground() {
-        super.cancelLoadInBackground();
-
-        synchronized (this) {
-            if (mCancellationSignal != null) {
-                mCancellationSignal.cancel();
+        Cursor cursor = mSQLiteDatabase.query(mDistinct, mTable, mColumns, mSelection, mSelectionArgs, mGroupBy, mHaving, mOrderBy, mLimit);
+        if (cursor != null) {
+            try {
+                // Ensure the cursor window is filled.
+                cursor.getCount();
+                cursor.registerContentObserver(mObserver);
+            } catch (RuntimeException ex) {
+                cursor.close();
+                throw ex;
             }
+            return new CursorAdapterObservableList<T>(cursor, mMapper);
         }
+        return null;
     }
 
     @Override

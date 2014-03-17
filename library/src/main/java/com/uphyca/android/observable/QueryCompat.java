@@ -26,7 +26,7 @@ import android.os.CancellationSignal;
 
 /**
  * The adapter of query method with CancellationSignal to provides transparent operations on supported Android version and not.
- *
+ * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
 class QueryCompat {

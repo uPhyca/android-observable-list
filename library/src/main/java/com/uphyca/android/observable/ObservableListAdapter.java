@@ -23,11 +23,7 @@ import android.database.ContentObserver;
 import android.database.DataSetObserver;
 import android.os.Handler;
 
-
-import java.util.AbstractList;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A concrete BaseAdapter that is backed by an ObservableList of arbitrary objects.

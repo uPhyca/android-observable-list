@@ -10,4 +10,7 @@ project(':robolectric').name = 'robolectric'
 include 'example'
 project(':example').name = 'example'
 
+include 'example-v4'
+project(':example-v4').name = 'example-v4'
+
 project(':').name = 'android-observable-list-parent'

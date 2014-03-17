@@ -22,7 +22,7 @@ import android.os.OperationCanceledException;
 
 /**
  * The adapter of OperationCanceledException to provides transparent operations on supported Android version and not.
- *
+ * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
 class OperationCanceledExceptionCompat {

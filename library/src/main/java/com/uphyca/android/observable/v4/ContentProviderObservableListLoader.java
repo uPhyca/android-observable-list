@@ -16,11 +16,14 @@
  * limitations under the License.
  */
 
-package com.uphyca.android.observable;
+package com.uphyca.android.observable.v4;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import com.uphyca.android.observable.CursorAdapterObservableList;
+import com.uphyca.android.observable.Mapper;
+import com.uphyca.android.observable.ObservableList;
 
 /**
  * A loader that queries the {@link android.content.ContentResolver} and returns a cursor backed {@link com.uphyca.android.observable.ObservableList}.
@@ -38,10 +41,8 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
     String mSortOrder;
     Mapper<T> mMapper;
 
-    CancellationSignalCompat mCancellationSignal;
-
     /**
-     * Creates an empty unspecified ObservableListLoader. You must follow this with calls to {@link #setUri(Uri)}, {@link #setSelection(String)}, etc to specify the query to perform.
+     * Creates an empty unspecified ObservableListLoader. You must follow this with calls to {@link #setUri(android.net.Uri)}, {@link #setSelection(String)}, etc to specify the query to perform.
      */
     public ContentProviderObservableListLoader(Context context) {
         super(context);
@@ -49,7 +50,7 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
     }
 
     /**
-     * Creates a fully-specified ObservableListLoader. See {@link android.content.ContentResolver#query(Uri, String[], String, String[], String)} for documentation on the meaning of the parameters.
+     * Creates a fully-specified ObservableListLoader. See {@link android.content.ContentResolver#query(android.net.Uri, String[], String, String[], String)} for documentation on the meaning of the parameters.
      * These will be passed as-is to that call.
      */
     public ContentProviderObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, Mapper<T> mapper) {
@@ -66,42 +67,20 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
     /* Runs on a worker thread */
     @Override
     public ObservableList<T> loadInBackground() {
-        synchronized (this) {
-            if (isLoadInBackgroundCanceled()) {
-                throw OperationCanceledExceptionCompat.create();
+        Cursor cursor = getContext().getContentResolver()
+                                    .query(mUri, mProjection, mSelection, mSelectionArgs, mSortOrder);
+        if (cursor != null) {
+            try {
+                // Ensure the cursor window is filled.
+                cursor.getCount();
+                cursor.registerContentObserver(mObserver);
+            } catch (RuntimeException ex) {
+                cursor.close();
+                throw ex;
             }
-            mCancellationSignal = new CancellationSignalCompat();
+            return new CursorAdapterObservableList<T>(cursor, mMapper);
         }
-        try {
-            Cursor cursor = QueryCompat.execute(getContext().getContentResolver(), mUri, mProjection, mSelection, mSelectionArgs, mSortOrder, mCancellationSignal);
-            if (cursor != null) {
-                try {
-                    // Ensure the cursor window is filled.
-                    cursor.getCount();
-                    cursor.registerContentObserver(mObserver);
-                } catch (RuntimeException ex) {
-                    cursor.close();
-                    throw ex;
-                }
-                return new CursorAdapterObservableList<T>(cursor, mMapper);
-            }
-            return null;
-        } finally {
-            synchronized (this) {
-                mCancellationSignal = null;
-            }
-        }
-    }
-
-    @Override
-    public void cancelLoadInBackground() {
-        super.cancelLoadInBackground();
-
-        synchronized (this) {
-            if (mCancellationSignal != null) {
-                mCancellationSignal.cancel();
-            }
-        }
+        return null;
     }
 
     public Uri getUri() {

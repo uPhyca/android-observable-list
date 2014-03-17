@@ -22,7 +22,7 @@ import android.os.CancellationSignal;
 
 /**
  * The adapter of CancellationSignal to provides transparent operations on supported Android version and not.
- *
+ * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
 class CancellationSignalCompat {
