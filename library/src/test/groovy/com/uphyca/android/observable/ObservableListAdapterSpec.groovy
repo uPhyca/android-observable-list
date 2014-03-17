@@ -35,7 +35,7 @@ class ObservableListAdapterSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def observableList = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
         def activity = Robolectric.buildActivity(Activity).create().get()
         def underTest = new ObservableListAdapter(activity, android.R.layout.simple_expandable_list_item_1, observableList)
@@ -52,7 +52,7 @@ class ObservableListAdapterSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def observableList = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
         def activity = Robolectric.buildActivity(Activity).create().get()
         def underTest = new ObservableListAdapter(activity, android.R.layout.simple_expandable_list_item_1, observableList)
@@ -69,7 +69,7 @@ class ObservableListAdapterSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def observableList = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
         def activity = Robolectric.buildActivity(Activity).create().get()
         def underTest = new ObservableListAdapter(activity, android.R.layout.simple_expandable_list_item_1)

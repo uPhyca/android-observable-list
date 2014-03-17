@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import com.uphyca.android.observable.ContentProviderObservableListLoader;
-import com.uphyca.android.observable.CursorAdapterObservableList;
+import com.uphyca.android.observable.Mapper;
 import com.uphyca.android.observable.ObservableListLoader;
 
 public class ContactsService {
@@ -20,7 +20,7 @@ public class ContactsService {
         return new ContactsLoader(mContext);
     }
 
-    private static class ContactsLoader extends ContentProviderObservableListLoader<String> implements CursorAdapterObservableList.Mapper<String> {
+    private static class ContactsLoader extends ContentProviderObservableListLoader<String> implements Mapper<String> {
 
         static final String[] PROJECTION = {
             ContactsContract.Contacts.DISPLAY_NAME_PRIMARY
@@ -34,7 +34,7 @@ public class ContactsService {
         }
 
         @Override
-        public String convert(Cursor cursor) {
+        public String map(Cursor cursor) {
             return cursor.isNull(0) ? "" : cursor.getString(0);
         }
     }

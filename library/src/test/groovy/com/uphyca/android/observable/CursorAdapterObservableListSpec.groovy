@@ -35,7 +35,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
 
         when:
@@ -52,7 +52,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
 
         when:
         underTest.add("Bob")
@@ -67,7 +67,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
 
         when:
@@ -83,7 +83,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         underlyingCursor.addRow(["Bob"])
 
         when:
@@ -98,7 +98,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
 
         when:
         underTest.get(0)
@@ -112,7 +112,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
         def dataSetObserver = Mock(DataSetObserver)
         underTest.registerDataSetObserver(dataSetObserver)
 
@@ -128,7 +128,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
 
         when:
         underTest.close()
@@ -143,7 +143,7 @@ class CursorAdapterObservableListSpec extends RoboSpecification {
         def underlyingCursor = new MatrixCursor(["name"] as String[])
         def underTest = new CursorAdapterObservableList(underlyingCursor, {
             return it.getString(0)
-        } as CursorAdapterObservableList.Mapper)
+        } as Mapper)
 
         underlyingCursor.addRow(["Bob"])
 

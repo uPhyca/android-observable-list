@@ -30,15 +30,6 @@ import java.util.AbstractList;
  */
 public class CursorAdapterObservableList<E> extends AbstractList<E> implements ObservableList<E> {
 
-    /**
-     * Maps cursor columns to a desired element
-     * 
-     * @param <E> the list element type
-     */
-    public interface Mapper<E> {
-        E convert(Cursor cursor);
-    }
-
     private final Cursor mCursor;
     private final Mapper<E> mMapper;
     private final Object[] mLock = new Object[0];
@@ -72,7 +63,7 @@ public class CursorAdapterObservableList<E> extends AbstractList<E> implements O
                 throwIndexOutOfBoundsException(location, size());
             }
             if (mCursor.moveToPosition(location)) {
-                return mMapper.convert(mCursor);
+                return mMapper.map(mCursor);
             }
             return null;
         }

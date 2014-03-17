@@ -36,7 +36,7 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
     String mSelection;
     String[] mSelectionArgs;
     String mSortOrder;
-    CursorAdapterObservableList.Mapper<T> mMapper;
+    Mapper<T> mMapper;
 
     CancellationSignalCompat mCancellationSignal;
 
@@ -53,7 +53,7 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
      * {@link android.content.ContentResolver#query(Uri, String[], String, String[], String)} for documentation on the meaning of the parameters.
      * These will be passed as-is to that call.
      */
-    public ContentProviderObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CursorAdapterObservableList.Mapper<T> mapper) {
+    public ContentProviderObservableListLoader(Context context, Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
         mUri = uri;
@@ -145,11 +145,11 @@ public class ContentProviderObservableListLoader<T> extends ObservableListLoader
         mSortOrder = sortOrder;
     }
 
-    public CursorAdapterObservableList.Mapper<T> getMapper() {
+    public Mapper<T> getMapper() {
         return mMapper;
     }
 
-    public void setMapper(CursorAdapterObservableList.Mapper<T> mapper) {
+    public void setMapper(Mapper<T> mapper) {
         mMapper = mapper;
     }
 }

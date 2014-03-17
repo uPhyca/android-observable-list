@@ -45,7 +45,7 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
 
     SQLiteDatabase mSQLiteDatabase;
 
-    CursorAdapterObservableList.Mapper<T> mMapper;
+    Mapper<T> mMapper;
     CancellationSignalCompat mCancellationSignal;
 
     /**
@@ -61,7 +61,7 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
      * {@link android.database.sqlite.SQLiteDatabase#query(boolean, String, String[], String, String[], String, String, String, String)} for documentation on the meaning of the parameters.
      * These will be passed as-is to that call.
      */
-    public SQLiteObservableListLoader(Context context, SQLiteOpenHelper SQLiteOpenHelper, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, CursorAdapterObservableList.Mapper<T> mapper) {
+    public SQLiteObservableListLoader(Context context, SQLiteOpenHelper SQLiteOpenHelper, boolean distinct, String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy, String limit, Mapper<T> mapper) {
         super(context);
         mObserver = new ForceLoadContentObserver();
         mSQLiteOpenHelper = SQLiteOpenHelper;
@@ -219,11 +219,11 @@ public class SQLiteObservableListLoader<T> extends ObservableListLoader<T> {
         mLimit = limit;
     }
 
-    public CursorAdapterObservableList.Mapper<T> getMapper() {
+    public Mapper<T> getMapper() {
         return mMapper;
     }
 
-    public void setMapper(CursorAdapterObservableList.Mapper<T> mapper) {
+    public void setMapper(Mapper<T> mapper) {
         mMapper = mapper;
     }
 }

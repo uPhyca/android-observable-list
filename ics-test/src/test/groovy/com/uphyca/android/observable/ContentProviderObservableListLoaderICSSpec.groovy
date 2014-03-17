@@ -26,9 +26,9 @@ class ContentProviderObservableListLoaderICSSpec extends RoboSpecification {
         given:
         def holder = new BlockingVariable<ObservableList<String>>(1)
         def underTest = new ContentProviderObservableListLoader<String>(application)
-        underTest.setMapper(new CursorAdapterObservableList.Mapper<String>() {
+        underTest.setMapper(new Mapper<String>() {
             @Override
-            String convert(Cursor cursor) {
+            String map(Cursor cursor) {
                 return cursor.getString(0)
             }
         })
