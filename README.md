@@ -1,3 +1,6 @@
+## DEPRECATED
+This project is now deprecated. 
+
 [![Build Status](https://travis-ci.org/uPhyca/android-observable-list.png?branch=master)](http://travis-ci.org/uPhyca/android-observable-list)
 
 
